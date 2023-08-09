@@ -87,5 +87,16 @@ defmodule ProtocolsTest do
 
       assert log =~ "message already contains embeded schema"
     end
+
+    test "does not encode an invalid record" do
+      {:ok, json} = :file.read_file("priv/user.1.json")
+      invalid_payload = json |> Poison.decode!()
+
+      {:error, error} =
+        AvroClient.encode_plain(invalid_payload, schema_name: "io.github.erszcz.protocols.User")
+
+      # IO.inspect(error, label: "Avro encode error")
+      assert %ErlangError{} = error
+    end
   end
 end
