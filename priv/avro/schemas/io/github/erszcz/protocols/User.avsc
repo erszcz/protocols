@@ -1,0 +1,23 @@
+{
+  "type": "record",
+  "name": "User",
+  "namespace": "io.github.erszcz.protocols",
+  "fields": [
+    {
+      "name": "id",
+      "type": "string"
+    },
+    {
+      "name": "createdAt",
+      "type": "string"
+    },
+    {
+      "name": "karma",
+      "type": "int"
+    },
+    {
+      "name": "isAdmin",
+      "type": "boolean"
+    }
+  ]
+}
