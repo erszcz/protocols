@@ -32,7 +32,9 @@ defmodule ProtocolsTest do
     end
 
     test "returns validation errors for an invalid object" do
-      assert match?([_ | _], JTD.validate(@user_schema, @invalid_user))
+      errors = JTD.validate(@user_schema, @invalid_user)
+      # IO.inspect(errors, label: "JTD validation errors")
+      assert match?([_ | _], errors)
     end
   end
 
