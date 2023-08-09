@@ -20,7 +20,8 @@ defmodule Protocols.MixProject do
   defp deps do
     [
       {:poison, "~> 5.0"},
-      {:jtd, "~> 0.1"}
+      {:jtd, "~> 0.1"},
+      {:avrora, "~> 0.21"}
     ]
   end
 end
