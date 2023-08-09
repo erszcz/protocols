@@ -35,4 +35,55 @@ defmodule ProtocolsTest do
       assert match?([_ | _], JTD.validate(@user_schema, @invalid_user))
     end
   end
+
+  describe "Avrora" do
+    import ExUnit.CaptureLog
+
+    setup _ do
+      start_supervised!(AvroClient)
+
+      {:ok, _schema} =
+        :file.read_file("priv/avro/schemas/io/github/erszcz/protocols/User.avsc")
+        |> elem(1)
+        |> AvroClient.Schema.Encoder.from_json()
+
+      :ok
+    end
+
+    test "starts AvroClient without an issue" do
+      :ok
+    end
+
+    test "decodes a record with no embedded schema" do
+      user = :file.read_file("priv/user.2.json") |> elem(1) |> Poison.decode!()
+
+      log =
+        capture_log(fn ->
+          {:ok, decoded_user} =
+            :file.read_file("priv/user.2.plain.avro")
+            |> elem(1)
+            |> AvroClient.decode_plain(schema_name: "io.github.erszcz.protocols.User")
+
+          assert ^user = decoded_user
+        end)
+
+      assert log =~ "reading schema"
+    end
+
+    test "decodes a record with an embedded schema" do
+      user = :file.read_file("priv/user.2.json") |> elem(1) |> Poison.decode!()
+
+      log =
+        capture_log(fn ->
+          {:ok, decoded_user} =
+            :file.read_file("priv/user.2.ocf.avro")
+            |> elem(1)
+            |> AvroClient.decode(schema_name: "io.github.erszcz.protocols.User")
+
+          assert [^user] = decoded_user
+        end)
+
+      assert log =~ "message already contains embeded schema"
+    end
+  end
 end
